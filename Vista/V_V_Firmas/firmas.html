@@ -1,0 +1,137 @@
+<?php
+// Incluye el archivo de autenticación
+require_once '../controladores/auth.php'; // Verifica que la ruta sea correcta
+verificarAutenticacion(); // Verifica que el usuario esté autenticado
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Asignación de Aulas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="../V_V_Principal/index.html">Nombre de la Tesis</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="../V_V_Docentes/docente.php">Datos del Docente</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../V_V_Cursos/cursos.php">Datos del Curso</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../V_V_Firmas/firmas.html">Firmas</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Asignación
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="../V_V_Asignacion/asignaciones.php">Asignación de Aulas</a>
+                        <a class="dropdown-item" href="../V_V_Editar/editar.php">Actualizar y Editar</a>
+                        <a class="dropdown-item" href="../V_V_Excel/excel.php">Vista Asignación</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container mt-5">
+        <h1 class="text-center">Formato de Firmas</h1>
+        <div class="form-row mt-4">
+            <div class="form-group col-md-6">
+                <label for="escuela">Seleccionar Escuela:</label>
+                <select id="escuela" name="escuela" class="form-control" onchange="cargarAsignaciones()">
+                    <option value="">Todas</option>
+                    <option value="1">EPIS</option>
+                    <option value="2">EPISW</option>
+                </select>
+            </div>
+            <!-- Eliminar el campo de búsqueda por docente -->
+        </div>
+        <!-- Botón para descargar en Excel -->
+        <div class="text-right mb-3">
+            <button class="btn btn-success" onclick="descargarExcel()">Descargar en Excel</button>
+        </div>
+        <div id="asignaciones-container"></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function cargarAsignaciones() {
+            const escuela = document.getElementById('escuela').value;
+
+            fetch(`../../controlador/C_Principal.php?escuela=${escuela}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('asignaciones-container');
+                    container.innerHTML = '';
+                    for (const dia in data) {
+                        const filteredData = data[dia];
+
+                        if (filteredData.length > 0) {
+                            const dayDiv = document.createElement('div');
+                            dayDiv.className = 'day-container mt-4';
+                            dayDiv.innerHTML = `<h2 class="text-center">${dia}</h2>`;
+                            const table = document.createElement('table');
+                            table.className = 'table table-striped table-bordered';
+                            const thead = document.createElement('thead');
+                            thead.innerHTML = `
+                                <tr>
+                                    <th>Docente</th>
+                                    <th>Curso</th>
+                                    <th>Grupo</th>
+                                    <td>C</td>
+                                    <th>Aula</th>
+                                    <th>Hora Inicio</th>
+                                    <th>Firma</th>
+                                    <th>Hora Fin</th>
+                                    <th>Firma</th>
+                                    <th>Observación</th>
+                                </tr>
+                            `;
+                            table.appendChild(thead);
+                            const tbody = document.createElement('tbody');
+                            filteredData.forEach(asignacion => {
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                                    <td>${asignacion.docente}</td>
+                                    <td>${asignacion.curso}</td>
+                                    <td>${asignacion.grupo}</td>
+                                    <td></td>
+                                    <td>${asignacion.aula}</td>
+                                    <td>${asignacion.hora_inicio}</td>
+                                    <td></td>
+                                    <td>${asignacion.hora_fin}</td>
+                                    <td></td>
+                                    <td></td>
+                                `;
+                                tbody.appendChild(tr);
+                            });
+                            table.appendChild(tbody);
+                            dayDiv.appendChild(table);
+                            container.appendChild(dayDiv);
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function descargarExcel() {
+            const escuela = document.getElementById('escuela').value;
+            window.location.href = `../../controlador/descargarExcel.php?escuela=${escuela}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            cargarAsignaciones();
+        });
+    </script>
+</body>
+</html>

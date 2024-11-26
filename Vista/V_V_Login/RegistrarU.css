@@ -1,0 +1,113 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url('../../img/pregrado.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Fondo rojo tenue para error */
+.error {
+    background-color: #f8d7da;
+    border: 1px solid red;
+}
+
+/* Fondo verde tenue para éxito */
+.success {
+    background-color: #d4edda;
+    border: 1px solid green;
+}
+
+.registro-form {
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo blanco translúcido */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 310px;
+    text-align: center;
+}
+
+.registro-form h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.registro-form label {
+    display: block;
+    margin-top: 10px;
+    color: #555;
+}
+
+.registro-form input {
+    width: 95%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.registro-form input:focus {
+    outline: none;
+    border: 1px solid #5cb85c;
+}
+
+
+
+.registro-form button {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.registro-form button:disabled {
+    background-color: #d6d8db;
+    cursor: not-allowed;
+}
+
+.registro-form button:hover:not(:disabled) {
+    background-color: #4cae4c;
+}
+
+.email-error-msg,
+.nombreUsuario-error-msg {
+    color: #a94442;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+#btnCancel {
+    background-color: #ff4d4d;    /* Color de fondo (rojo claro) */
+    color: white;                 /* Color del texto */
+    border: none;                 /* Sin borde */
+    padding: 10px 20px;           /* Espaciado interno */
+    font-size: 16px;              /* Tamaño de la fuente */
+    border-radius: 5px;           /* Bordes redondeados */
+    cursor: pointer;              /* Cambia el cursor al pasar sobre el botón */
+    transition: background-color 0.3s; /* Efecto de transición */
+}
+
+#btnCancel:hover {
+    background-color: #e60000;    /* Color más oscuro al pasar el mouse */
+}
+
+#btnCancel {
+    background-color: #ff4d4d !important; /* Color de fondo (rojo claro) */
+    color: white !important;              /* Color del texto */
+    border: none !important;              /* Sin borde */
+    /* ... el resto de tus estilos ... */
+}
+
+
+a {
+    text-decoration: none; /* Remueve el subrayado del enlace */
+}

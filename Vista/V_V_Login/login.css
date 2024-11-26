@@ -1,0 +1,142 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+body {
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    width: 100%;
+}
+
+.error {
+    color: #a94442; /* Rojo oscuro */
+    background-color: #f2dede; /* Relleno tenue rojizo */
+    border: 1px solid #ebccd1; /* Borde rojo claro */
+    padding: 10px;
+    border-radius: 8px; /* Bordes redondeados */
+    margin-top: 15px;
+    text-align: center;
+}
+
+.background {
+    background-image: url('../../img/pregrado.jpg'); /* Cambia la ruta si es necesario */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: calc(96vh - 100px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    margin: 0;
+}
+
+.form-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #3e8e41;
+}
+
+.checkbox-group {
+    margin-bottom: 25px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 12px;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    margin-top: auto;
+}
+
+footer p {
+    margin: 0;
+}
+
+.logo-FISI-IZQ {
+    float: left;
+    max-width: 50%;
+    height: auto;
+}
+
+.logo-UNMSM-DER {
+    float: right;
+    max-width: 50%;
+    height: auto;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px; /* Espaciado interno para hacerlo más grande */
+    font-size: 16px; /* Tamaño de fuente */
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+}
+
+/* Tamaño del checkbox "Recordar contraseña" */
+.checkbox-group input[type="checkbox"] {
+    width: 20px; /* Ajusta el ancho según el tamaño que prefieras */
+    height: 20px; /* Ajusta la altura */
+    transform: scale(1.2); /* Escala el tamaño del checkbox */
+    margin-right: 5px; /* Espacio entre el checkbox y el texto */
+}
