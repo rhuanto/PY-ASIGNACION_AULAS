@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $asignacion = new Asignacion();
     $result = $asignacion->actualizarAsignacion($id, $docente, $curso, $dia, $hora_inicio, $hora_fin, $grupo, $ciclo, $cantidad_alumnos);
 
-    if ($result) {
-        echo json_encode(['success' => true, 'message' => 'Asignación actualizada y aula reasignada correctamente.']);
+    if (strpos($result, "actualizó") !== false || strpos($result, "reasignó") !== false) {
+        echo json_encode(['success' => true, 'message' => $result]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Error al actualizar la asignación.']);
+        echo json_encode(['success' => false, 'message' => $result]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => 'Método no permitido.']);

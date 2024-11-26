@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $usuario = new Usuario();
     if ($usuario->registrarUsuario($nombre, $email, $password)) {
-        header("Location: http://localhost/SISTEMA%20RESERVA%20AULAS_/Vista/V_V_Login/login.php"); // Redirigir al login después del registro
+        header("Location: http://localhost:8012/SISTEMA%20RESERVA%20AULAS_/Vista/V_V_Login/login.php"); // Redirigir al login después del registro
     } else {
         echo "Error al registrar el usuario.";
     }

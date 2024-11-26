@@ -12,10 +12,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $escuelaId = isset($_POST['escuela']) ? $_POST['escuela'] : null;
 
     $asignacion = new Asignacion();
-    if ($asignacion->asignarAula($id_docente, $id_curso, $dia, $hora_inicio, $hora_fin, $grupo, $cantidad_alumnos, $escuelaId)) {
-        header("Location: ../Vista/V_V_Asignacion/asignaciones.php");
+    $resultado = $asignacion->asignarAula($id_docente, $id_curso, $dia, $hora_inicio, $hora_fin, $grupo, $cantidad_alumnos, $escuelaId);
+
+    if ($resultado) {
+        // Redirigir con un mensaje indicando el aula asignada
+        header("Location: ../Vista/V_V_Asignacion/asignaciones.php?success=Aula asignada con éxito: $resultado");
     } else {
-        echo "Error al asignar el aula o no hay aulas disponibles";
+        // Obtener mensaje de error específico
+        $errorMessage = "No hay aulas disponibles para las condiciones seleccionadas.";
+        header("Location: ../Vista/V_V_Asignacion/asignaciones.php?error=$errorMessage");
     }
 }
 ?>

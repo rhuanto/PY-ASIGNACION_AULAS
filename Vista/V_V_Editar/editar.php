@@ -47,6 +47,8 @@ verificarAutenticacion(); // Llama a la función para verificar la autenticació
         </div>
     </nav>
     <h1>Editar Asignaciones</h1>
+    <!-- Contenedor para mostrar mensajes -->
+    <div id="mensaje-resultado" class="alert d-none" role="alert"></div>
     <div class="main-container">
         <label for="asignacion-select">Seleccionar Asignación:</label>
         <select id="asignacion-select" class="form-control">

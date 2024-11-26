@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const cantidadAlumnosInput = document.getElementById('cantidad_alumnos');
     const guardarBtn = document.getElementById('guardar-btn');
     const eliminarBtn = document.getElementById('eliminar-btn');
+    const mensajeDiv = document.getElementById('mensaje-resultado');
 
     // Inicializa Select2 en el select de asignaciones
     asignacionSelect.select2({
@@ -47,6 +48,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Función para mostrar mensajes en el contenedor dinámico
+    function mostrarMensaje(mensaje, tipo) {
+        mensajeDiv.className = `alert alert-${tipo}`;
+        mensajeDiv.textContent = mensaje;
+        mensajeDiv.classList.remove('d-none');
+    }
+
     // Manejar el botón de guardar
     guardarBtn.addEventListener('click', function () {
         const idAsignacion = asignacionSelect.val();
@@ -72,13 +80,16 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Actualización exitosa');
-                    location.reload(); // Recargar la página
+                    mostrarMensaje(data.message, 'success');
+                    setTimeout(() => location.reload(), 2000); // Recargar después de 2 segundos
                 } else {
-                    alert('Error al actualizar');
+                    mostrarMensaje(data.message, 'danger');
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                mostrarMensaje('Ocurrió un error inesperado.', 'danger');
+            });
     });
 
     // Manejar el botón de eliminar
@@ -91,13 +102,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert('Eliminación exitosa');
-                        location.reload(); // Recargar la página
+                        mostrarMensaje('Eliminación exitosa', 'success');
+                        setTimeout(() => location.reload(), 2000); // Recargar después de 2 segundos
                     } else {
-                        alert('Error al eliminar');
+                        mostrarMensaje('Error al eliminar', 'danger');
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    mostrarMensaje('Ocurrió un error al intentar eliminar.', 'danger');
+                });
         }
     });
 });

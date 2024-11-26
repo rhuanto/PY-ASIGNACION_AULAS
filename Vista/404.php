@@ -47,7 +47,7 @@
     <div class="error-container">
         <h1>404</h1>
         <p>Ops!, tenemos un problema.</p>
-        <a href="http://localhost/SISTEMA%20RESERVA%20AULAS_/Vista/V_V_Login/login.php">Regresar al inicio de sesión</a>
+        <a href="http://localhost:8012/SISTEMA%20RESERVA%20AULAS_/Vista/V_V_Login/login.php">Regresar al inicio de sesión</a>
     </div>
 </body>
 </html>

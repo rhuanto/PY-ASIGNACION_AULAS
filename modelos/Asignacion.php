@@ -9,37 +9,32 @@ class Asignacion {
         $this->conn = $database->connect();
     }
 
-    public function asignarAula($id_docente, $id_curso, $dia, $hora_inicio, $hora_fin, $grupo, $cantidad_alumnos) {
-        // Obtener el ciclo del curso
-        $query_ciclo = "SELECT Ciclo FROM cursos WHERE Id_Curso = ?";
-        $stmt_ciclo = $this->conn->prepare($query_ciclo);
-        $stmt_ciclo->bind_param("i", $id_curso);
-        $stmt_ciclo->execute();
-        $result_ciclo = $stmt_ciclo->get_result();
-        $curso = $result_ciclo->fetch_assoc();
-        $ciclo = $curso['Ciclo'];
-
-        // Obtener un aula disponible
-        $id_aula = $this->obtenerAulaDisponible($cantidad_alumnos, $dia, $hora_inicio, $hora_fin);
-
-        if ($id_aula) {
+    public function asignarAula($id_docente, $id_curso, $dia, $hora_inicio, $hora_fin, $grupo, $cantidad_alumnos, $escuelaId = null) {
+        $aula = $this->obtenerAulaDisponible($cantidad_alumnos, $dia, $hora_inicio, $hora_fin);
+        
+        if ($aula) {
+            $id_aula = $aula['Id_Aula'];
+            $nombre_aula = $aula['Nombre'];
+            
             $query = "CALL SP_AsignarAula(?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $this->conn->prepare($query);
             $stmt->bind_param("iiissssi", $id_docente, $id_curso, $id_aula, $dia, $hora_inicio, $hora_fin, $grupo, $cantidad_alumnos);
 
             if ($stmt->execute()) {
-                return true;
+                // Registrar la acción en auditoría
+                $this->registrarAccion("Aula asignada: $nombre_aula para el curso $id_curso.");
+                return $nombre_aula; // Devolver el nombre del aula asignada
             } else {
-                return false;
+                return false; // Error en la ejecución
             }
         } else {
-            return false;
+            return false; // No hay aulas disponibles
         }
     }
 
     public function obtenerAulaDisponible($cantidad_alumnos, $dia, $hora_inicio, $hora_fin) {
         // Intentar encontrar un aula con capacidad exacta
-        $query_exact = "SELECT a.Id_Aula 
+        $query_exact = "SELECT a.Id_Aula, a.Nombre 
                         FROM aulas a
                         LEFT JOIN asignaciones asig ON a.Id_Aula = asig.Id_Aula AND asig.Dia = ? AND (
                             (asig.Hora_Inicio < ? AND asig.Hora_Fin > ?) OR
@@ -55,11 +50,11 @@ class Asignacion {
         $aula_exact = $result_exact->fetch_assoc();
 
         if ($aula_exact) {
-            return $aula_exact['Id_Aula'];
+            return $aula_exact;
         }
 
         // Intentar encontrar un aula con capacidad cercana dentro de un margen de 6 alumnos
-        $query_close = "SELECT a.Id_Aula 
+        $query_close = "SELECT a.Id_Aula, a.Nombre 
                         FROM aulas a
                         LEFT JOIN asignaciones asig ON a.Id_Aula = asig.Id_Aula AND asig.Dia = ? AND (
                             (asig.Hora_Inicio < ? AND asig.Hora_Fin > ?) OR
@@ -78,11 +73,11 @@ class Asignacion {
         $aula_close = $result_close->fetch_assoc();
 
         if ($aula_close) {
-            return $aula_close['Id_Aula'];
+            return $aula_close;
         }
 
         // Si no hay aulas disponibles dentro del margen de 6 alumnos, asignar cualquier aula disponible con suficiente capacidad
-        $query_any = "SELECT a.Id_Aula 
+        $query_any = "SELECT a.Id_Aula, a.Nombre 
                       FROM aulas a
                       LEFT JOIN asignaciones asig ON a.Id_Aula = asig.Id_Aula AND asig.Dia = ? AND (
                           (asig.Hora_Inicio < ? AND asig.Hora_Fin > ?) OR
@@ -98,7 +93,7 @@ class Asignacion {
         $result_any = $stmt_any->get_result();
         $aula_any = $result_any->fetch_assoc();
 
-        return $aula_any ? $aula_any['Id_Aula'] : null;
+        return $aula_any ? $aula_any : null;
     }
 
     public function obtenerAsignacionesPorEscuela($escuelaId) {
@@ -126,10 +121,11 @@ class Asignacion {
         return $result;
     }
 
-    public function obtenerAsignaciones() {
-        $query = "SELECT * FROM asignaciones";
-        $result = $this->conn->query($query);
-        return $result;
+    public function registrarAccion($mensaje) {
+        $query = "INSERT INTO auditoria (accion, fecha) VALUES (?, NOW())";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $mensaje);
+        $stmt->execute();
     }
 }
 ?>

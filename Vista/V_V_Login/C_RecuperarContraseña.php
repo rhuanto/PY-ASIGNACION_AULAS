@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
 
         // Enviar email con el enlace de recuperación
-        $enlace = "http://localhost/SISTEMA%20RESERVA%20AULAS_/Vista/V_V_Login/reestablecer_contraseña.php?token=$token"; 
+        $enlace = "http://localhost:8012/SISTEMA%20RESERVA%20AULAS_/Vista/V_V_Login/reestablecer_contraseña.php?token=$token"; 
         $asunto = "Recuperación de Contraseña";
         $mensaje = "Haz clic en el siguiente enlace para restablecer tu contraseña: $enlace";
         $cabeceras = "From: no-reply@tu_dominio.com\r\n";

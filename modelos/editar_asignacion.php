@@ -33,7 +33,15 @@ class Asignacion {
     }
 
     public function actualizarAsignacion($id, $docente, $curso, $dia, $hora_inicio, $hora_fin, $grupo, $ciclo, $cantidad_alumnos) {
-        // Actualizar la asignación
+        // Obtener el aula actual para comparar
+        $query_actual = "SELECT Id_Aula FROM asignaciones WHERE Id_Asignacion = ?";
+        $stmt_actual = $this->conn->prepare($query_actual);
+        $stmt_actual->bind_param("i", $id);
+        $stmt_actual->execute();
+        $result_actual = $stmt_actual->get_result();
+        $aula_actual = $result_actual->fetch_assoc()['Id_Aula'];
+
+        // Actualizar los datos básicos de la asignación
         $query = "UPDATE asignaciones 
                   SET Id_Docente = (SELECT Id_Docente FROM docentes WHERE Nombre = ?), 
                       Id_Curso = (SELECT Id_Curso FROM cursos WHERE Nombre = ?), 
@@ -54,20 +62,37 @@ class Asignacion {
             $curso_data = $result_curso->fetch_assoc();
             $id_curso = $curso_data['Id_Curso'];
 
-            // Obtener un aula disponible basada en la nueva cantidad de alumnos
+            // Verificar si el aula actual sigue siendo válida
             $id_aula = $this->obtenerAulaDisponible($cantidad_alumnos, $dia, $hora_inicio, $hora_fin);
 
             if ($id_aula) {
-                // Actualizar el aula en la asignación
-                $query_update_aula = "UPDATE asignaciones SET Id_Aula = ? WHERE Id_Asignacion = ?";
-                $stmt_update_aula = $this->conn->prepare($query_update_aula);
-                $stmt_update_aula->bind_param("ii", $id_aula, $id);
-                return $stmt_update_aula->execute();
+                if ($id_aula != $aula_actual) {
+                    // Reasignar a otra aula y obtener su nombre
+                    $query_update_aula = "UPDATE asignaciones SET Id_Aula = ? WHERE Id_Asignacion = ?";
+                    $stmt_update_aula = $this->conn->prepare($query_update_aula);
+                    $stmt_update_aula->bind_param("ii", $id_aula, $id);
+                    $stmt_update_aula->execute();
+
+                    // Obtener el nombre del aula reasignada
+                    $query_aula_nombre = "SELECT Nombre FROM aulas WHERE Id_Aula = ?";
+                    $stmt_aula_nombre = $this->conn->prepare($query_aula_nombre);
+                    $stmt_aula_nombre->bind_param("i", $id_aula);
+                    $stmt_aula_nombre->execute();
+                    $result_aula_nombre = $stmt_aula_nombre->get_result();
+                    $nombre_aula = $result_aula_nombre->fetch_assoc()['Nombre'];
+
+                    return "Se reasignó a la aula: $nombre_aula";
+                } else {
+                    // Mismo aula
+                    return "Se actualizó la asignación en la misma aula.";
+                }
             } else {
-                return false;
+                // No hay aulas disponibles
+                return "No se puede actualizar porque no hay aulas disponibles que cumplan con los nuevos requisitos.";
             }
         } else {
-            return false;
+            // Error genérico
+            return "Error al actualizar la asignación.";
         }
     }
 
